@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}User Registration{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card shadow-lg p-4 rounded-4" style="width: 400px; background: #f9f9f9;">
+        <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #333;">Create an Account</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" id="username" name="username" class="form-control rounded-pill border border-primary" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" id="password" name="password" class="form-control rounded-pill border border-primary" required>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control rounded-pill border border-primary" required>
+            </div>
+            <button type="submit" class="btn btn-lg w-100 custom-btn">Register</button>
+        </form>
+        <p class="text-center mt-3">
+            Already have an account? <a href="/" style="color: #FF7F50;">Login</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
