@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Thank You{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 80vh;">
+    <h1 class="mb-4" style="font-size: 3rem; font-weight: bold; color: #333;">
+        THANK YOU FOR YOUR DONATION!
+    </h1>
+
+    <img src="{{ url_for('static', filename='thank_you.png') }}" 
+         alt="Thank You Banner" 
+         class="img-fluid rounded-4 shadow mb-4" 
+         style="max-width: 800px;">
+
+    <p class="mb-5 px-4" style="max-width: 700px; font-size: 1.2rem; color: #555;">
+        Your contribution will go a long way in making a difference. We truly appreciate your support!
+    </p>
+
+    <p style="font-family: Arial, sans-serif;font-style: italic; color: #333;">
+        Want to know how your donation is helping others? 
+        <a href="/query" class="btn btn-lg px-5 py-3 rounded-pill text-white" style="background-color: #FF7F50;">
+            Click here to find out!
+        </a>
+    </p>
+</div>
+{% endblock %}

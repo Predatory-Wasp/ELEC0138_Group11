@@ -24,7 +24,7 @@ def login():
 
         if user and check_password_hash(user["password"], password):
             session["user"] = username
-            return redirect("/query")
+            return redirect("/welcome")
         else:
             return "❌ Login failed. Incorrect username or password!"
 
@@ -51,6 +51,43 @@ def register():
         return redirect("/")
 
     return render_template("register.html")
+
+@app.route("/welcome")
+def welcome():
+    if "user" not in session:
+        return redirect("/")
+    return render_template("welcome.html")
+
+@app.route("/donate", methods=["GET", "POST"])
+def donate():
+    if "user" not in session:
+        return redirect("/")
+
+    if request.method == "POST":
+        amount = request.form["amount"]
+        method = request.form["method"]
+        message = request.form["message"]
+
+        print(f"✅ Received donation: £{amount} via {method}. Message: {message}")
+
+        return redirect("/thank_you")
+
+    return render_template("donate.html")
+
+@app.route("/thank_you")
+def thank_you():
+    if "user" not in session:
+        return redirect("/")  
+
+    return render_template("thank_you.html")
+
+@app.route("/random_loans")
+def random_loans():
+    conn = get_db_connection()
+    data = conn.execute("SELECT * FROM loans ORDER BY RANDOM() LIMIT 10").fetchall()
+    conn.close()
+    
+    return jsonify([dict(row) for row in data])
 
 @app.route("/query")
 def query_page():

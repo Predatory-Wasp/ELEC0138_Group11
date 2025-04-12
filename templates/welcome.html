@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 80vh;">
+    <h1 class="mb-4" style="font-size: 3rem; font-weight: bold; color: #333;">
+        Your Donation Makes a Difference
+    </h1>
+
+    <img src="{{ url_for('static', filename='donation.png') }}"
+         alt="Donation Banner" 
+         class="img-fluid rounded-4 shadow mb-4" 
+         style="max-width: 500px; max-height: 300px;">
+
+    <p class="mb-5 px-4" style="max-width: 700px; font-size: 1.2rem; color: #555;">
+        Every contribution you make helps us reach someone in need. Your support matters more than you know.
+    </p>
+
+    <a href="/donate" 
+       class="btn btn-lg px-5 py-3 rounded-pill text-white"
+       style="background-color: #FF7F50; font-size: 1.25rem;">
+        Donate Now
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Make a Donation{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg p-4 rounded-4" style="width: 500px; background: #f9f9f9;">
+        <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #333;">
+            Make a Donation
+        </h2>
+        <form method="POST" action="/donate">
+            <div class="mb-3">
+                <label for="amount" class="form-label">Donation Amount (GBP):</label>
+                <input type="number" id="amount" name="amount" min="1" step="0.01"
+                       class="form-control rounded-pill border border-primary" required>
+            </div>
+            <div class="mb-3">
+                <label for="method" class="form-label">Payment Method:</label>
+                <select id="method" name="method" class="form-select rounded-pill border border-primary" required>
+                    <option value="">-- Select --</option>
+                    <option value="credit">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="Apple Pay">Apple Pay</option>
+                    <option value="Google Pay">Google Pay</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Leave a Message (Optional):</label>
+                <textarea id="message" name="message" rows="3"
+                          class="form-control rounded-4 border border-secondary"></textarea>
+            </div>
+            <button type="submit" class="btn btn-lg w-100 text-white"
+                    style="background-color: #FF7F50;">
+                Donate Now
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

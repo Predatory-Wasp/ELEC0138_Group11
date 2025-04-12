@@ -15,10 +15,10 @@
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
-                <th>Funded Amount</th>
-                <th>Use</th>
-                <th>Country</th>
-                <th>Currency</th>
+                <th>Funded Amount</th>
+                <th>Use</th>
+                <th>Country</th>
+                <th>Currency</th>
             </tr>
         </thead>
         <tbody id="resultTable"></tbody>
@@ -26,9 +26,12 @@
 </div>
 
 <script>
-    function searchData() {
-        const loanId = document.getElementById("searchInput").value;
-        fetch(`/search?id=${loanId}`)
+    window.onload = function() {
+        fetchRandomLoans();
+    };
+
+    function fetchRandomLoans() {
+        fetch("/random_loans")
             .then(response => response.json())
             .then(data => {
                 const resultTable = document.getElementById("resultTable");
@@ -36,12 +39,35 @@
                 data.forEach(row => {
                     resultTable.innerHTML += `<tr class="hover-effect">
                         <td>${row.id}</td>
-                        <td>${row.funded_amount}</td>
-                        <td>${row.use}</td>
-                        <td>${row.country}</td>
-                        <td>${row.currency}</td>
+                        <td>${row.funded_amount}</td>
+                        <td>${row.use}</td>
+                        <td>${row.country}</td>
+                        <td>${row.currency}</td>
                     </tr>`;
                 });
+            });
+    }
+
+    function searchData() {
+        const loanId = document.getElementById("searchInput").value;
+        fetch(`/search?id=${loanId}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultTable = document.getElementById("resultTable");
+                resultTable.innerHTML = "";
+                if (data.length > 0) {
+                    data.forEach(row => {
+                        resultTable.innerHTML += `<tr class="hover-effect">
+                            <td>${row.id}</td>
+                            <td>${row.funded_amount}</td>
+                            <td>${row.use}</td>
+                            <td>${row.country}</td>
+                            <td>${row.currency}</td>
+                        </tr>`;
+                    });
+                } else {
+                    resultTable.innerHTML = `<tr><td colspan="5">No records found.</td></tr>`;
+                }
             });
     }
 </script>
