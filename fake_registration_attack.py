@@ -2,15 +2,15 @@ import requests
 import time
 import random
 
-# 注册页面 URL
+# registration page URL
 register_url = "http://127.0.0.1:5000/register"
 
-# 生成虚假手机号
+# Generate fake mobile phone numbers
 def generate_fake_phone(i):
-    # 生成 11 位合法格式的手机号码（例如：13800000001）
+    # Generate 11-digit legal mobile phone number（eg：13800000001）
     return f"1380000{str(i).zfill(4)}"
 
-# 模拟批量注册
+# Simulate Bulk Registration
 for i in range(10):
     username = f"fakeuser{i}"
     password = "password123"
@@ -24,9 +24,9 @@ for i in range(10):
         "phone": phone
     })
 
-    # 输出响应状态与部分返回内容
+    # Output response status and partial return content
     print(f"Status: {response.status_code}")
     print(f"Response preview: {response.text[:100]}")
 
-    # 模拟人为延迟（可去掉）
+    # Simulation of artificial delays
     time.sleep(0.1)
