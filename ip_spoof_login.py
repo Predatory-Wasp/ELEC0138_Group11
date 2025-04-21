@@ -1,20 +1,20 @@
 import requests
 
-# 模拟多个来源 IP 地址
+# Emulating Multiple Source IP Addresses
 ip_list = [
     "1.2.3.4",
     "8.8.8.8",
     "101.200.50.1",
-    "192.168.1.99",  # 局域网测试
+    "192.168.1.99",  # LAN testing
     "222.186.30.15"
 ]
 
-# 目标地址
+# target address
 login_url = "http://127.0.0.1:5000/"
 
-# 正确的账号密码（你必须提前注册）
+# Correct account password (registered in advance）
 username = "yihan"
-password = "lyh2002626"  # 请替换为真实密码
+password = "lyh2002626"  # real password
 
 for spoof_ip in ip_list:
     headers = {
@@ -28,7 +28,7 @@ for spoof_ip in ip_list:
         "password": password
     })
 
-    # 输出响应内容 & 判断是否进入验证阶段
+    # Outputs the response & determines whether to enter the validation phase
     print(f"Response status: {response.status_code}")
     print("Redirected to:", response.url)
 
