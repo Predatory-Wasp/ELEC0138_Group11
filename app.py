@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
-# ✅ 使用 Redis 存储限速信息，确保 Flask-Limiter 稳定工作
+# ✅ Using Redis to Store Speed Limit Information to Ensure Flask-Limiter is Stable
 redis_client = Redis(host="localhost", port=6379)
 print("✅ Redis connection test:", redis_client.ping())
 limiter = Limiter(
@@ -33,17 +33,17 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# 生成6位验证码 / Generate 6-digit code
+#  Generate 6-digit code
 def generate_code(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
-# 模拟发送验证码（打印代替） / Simulate sending code (print)
+#  Simulate sending code (print)
 def send_verification_code(phone, code):
-    print(f"📧 发送验证码到 {phone}：{code}")
+    print(f"📧 Sending code to {phone}：{code}")
 
-# 登录流程：用户名+密码 → 验证码 → 验证通过 → 登录成功
+# Login process: user name + password → authentication code → authentication passed → login successful
 # @shared_login_limit
-# 全局登录尝试计数器
+# global attempt counter
 login_attempts = {}
 @app.route("/", methods=["GET", "POST"], endpoint="login")
 def login():
@@ -58,7 +58,7 @@ def login():
         return "⚠️ Too many login attempts from this IP. Please try again later.", 429
 
     login_attempts[ip].append(now)
-    print(f"🔐 login triggered from IP: {ip} | 当前尝试次数: {len(login_attempts[ip])}")
+    print(f"🔐 login triggered from IP: {ip} | Number of current attempts: {len(login_attempts[ip])}")
 
     if request.method == "POST":
         username = request.form["username"]
@@ -72,9 +72,9 @@ def login():
         if user and check_password_hash(user["password"], password):
             last_ip = user["last_login_ip"]
             if last_ip and last_ip != login_ip:
-                print(f"⚠️ 检测到新设备登录：当前IP={login_ip}, 上次IP={last_ip}")
+                print(f"⚠️ New device login detected: current IP={login_ip}, last IP={last_ip} ")
             else:
-                print("✅ 登录环境正常")
+                print("✅ The login environment is normal")
 
             code = generate_code()
             session["pending_user"] = username
@@ -116,8 +116,8 @@ def verify():
 
     return render_template("verify.html")
 
-# 注册：填写信息 → 发送验证码 → 跳转验证码页
-@limiter.limit("3 per minute", override_defaults=False)  # 限制每个IP每分钟最多注册3次
+# Registration: Fill in the information → send verification code → jump to the verification code page
+@limiter.limit("3 per minute", override_defaults=False)  # Limit each IP to a maximum of 3 registrations per minute
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -150,7 +150,7 @@ def register():
 
     return render_template("register.html")
 
-# 注册验证码验证
+# Registration Verification Code Validation
 @app.route("/register_verify", methods=["GET", "POST"])
 def register_verify():
     if "reg_username" not in session:
@@ -171,7 +171,7 @@ def register_verify():
             ))
             conn.commit()
             conn.close()
-            # 清理 session
+            # clear session
             for key in ["reg_username", "reg_password", "reg_phone", "reg_code", "reg_code_expiry", "reg_attempts"]:
                 session.pop(key, None)
             return redirect("/")
@@ -220,7 +220,7 @@ def create_project():
         score = detect_ai_generated_text(description)
         print(f"🤖 AI Trust Score: {score}")
 
-        # ✅ 存入数据库
+        # ✅ deposit in a database
         conn = get_db_connection()
         conn.execute(
             "INSERT INTO projects (title, description, ai_score) VALUES (?, ?, ?)",
