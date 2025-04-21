@@ -3,7 +3,7 @@ import random
 import time
 
 
-# 伪造项目生成函数
+# Fake Project Generation Functions
 def generate_fake_project():
     titles = ["Urgent Help", "Medical Crisis", "Orphan Fund", "Emergency Aid"]
     descriptions = [
@@ -18,12 +18,12 @@ def generate_fake_project():
     }
 
 
-# 攻击脚本配置
+# Attack Script Configuration
 target_url = "http://127.0.0.1:5000/create_project"
-number_of_submissions = 10  # 可调整次数
-delay_between = 1  # 每次提交之间的间隔（秒）
+number_of_submissions = 10  # Adjustable number of times
+delay_between = 1  # Interval between each commit (seconds）
 
-# 模拟登录会话（可跳过登录验证时）
+# Simulated login session (when login verification can be skipped)
 session = requests.Session()
 
 for i in range(number_of_submissions):
