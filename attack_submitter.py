@@ -4,7 +4,7 @@ import requests
 import random
 import time
 
-# 🎭 模拟 AI 伪造的众筹项目描述
+# Simulating AI Fake Crowdfunding Project Descriptions
 fake_descriptions = [
     "My child needs urgent surgery. We are desperate. Please donate now.",
     "Emergency! We have no money left and time is running out.",
@@ -13,7 +13,7 @@ fake_descriptions = [
     "Life or death situation. Your help could save a life.",
 ]
 
-# 随机标题
+# Random Headlines
 def random_title():
     return random.choice([
         "Emergency Help Needed",
@@ -23,7 +23,7 @@ def random_title():
         "Urgent Donation Request"
     ])
 
-# 提交数量
+# Number of submissions
 num_submissions = 5
 
 
@@ -37,4 +37,4 @@ for i in range(num_submissions):
     response = requests.post("http://127.0.0.1:5000/create_project", data=payload)
 
     print(f"✅ Submitted #{i+1} - Status: {response.status_code}")
-    time.sleep(1)  # 控制请求频率
+    time.sleep(1) 
