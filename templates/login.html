@@ -6,7 +6,17 @@
 <div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
     <div class="card shadow-lg p-4 rounded-4" style="width: 400px; background: #f9f9f9;">
         <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif; color: #333;">User Login</h2>
-        <form method="POST">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="POST" action="/">
             <div class="mb-3">
                 <label for="username" class="form-label">Username:</label>
                 <input type="text" id="username" name="username" class="form-control rounded-pill border border-primary" required>
