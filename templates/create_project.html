@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Crowdfunding Project</title>
+</head>
+<body>
+    <h2>Submit a Crowdfunding Project</h2>
+    <form method="POST" action="/create_project">
+        <label for="title">Project Title:</label><br>
+        <input type="text" name="title" required><br><br>
+
+        <label for="description">Project Description:</label><br>
+        <textarea name="description" rows="6" cols="60" required></textarea><br><br>
+
+        <input type="submit" value="Submit Project">
+    </form>
+</body>
+</html>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}; margin: 10px 0;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
