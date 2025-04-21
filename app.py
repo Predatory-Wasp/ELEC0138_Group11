@@ -26,7 +26,7 @@ DATABASE = "database.db"
 
 @app.before_request
 def debug_limiter_state():
-    print(f"📍 当前 endpoint: {request.endpoint} | path: {request.path}")
+    print(f"📍 now endpoint: {request.endpoint} | path: {request.path}")
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
