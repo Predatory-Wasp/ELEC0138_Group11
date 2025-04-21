@@ -1,14 +1,14 @@
 import requests
 
-# 假设攻击者猜测某个用户是 "admin"，尝试伪造会话
+# Suppose an attacker guesses that a user is ‘yihan’ and tries to spoof the session
 target_user = "yihan"
 
-# 构造 session cookie（模拟用户已登录）
+# Construct a session cookie (to simulate that the user is logged in)
 cookies = {
-    "session": "invalid_session_value"  # 👈 这是攻击的重点，真实值需要暴力破解或从 XSS 获得
+    "session": "invalid_session_value"  # This is the focus of the attack, the real value needs to be brute-force broken or obtained from XSS
 }
 
-# 请求 /query 页面，测试是否可以绕过登录验证
+# Request a /query page to test if login authentication can be bypassed
 url = "http://127.0.0.1:5000/query"
 
 response = requests.get(url, cookies=cookies)
