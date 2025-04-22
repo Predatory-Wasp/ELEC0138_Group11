@@ -18,7 +18,7 @@ print("✅ Redis connection test:", redis_client.ping())
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
-    storage_uri="memory://",
+    storage_uri="redis://localhost:6379",
     default_limits=["3 per minute"]
 )
 
@@ -26,29 +26,29 @@ DATABASE = "database.db"
 
 @app.before_request
 def debug_limiter_state():
-    print(f"📍 now endpoint: {request.endpoint} | path: {request.path}")
+    print(f"📍 this endpoint: {request.endpoint} | path: {request.path}")
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
 
-#  Generate 6-digit code
+# Generate 6-digit code
 def generate_code(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
-#  Simulate sending code (print)
+# Simulate sending code (print)
 def send_verification_code(phone, code):
-    print(f"📧 Sending code to {phone}：{code}")
+    print(f"📧 Send verification code to {phone}：{code}")
 
-# Login process: user name + password → authentication code → authentication passed → login successful
+#  Login process: user name + password → authentication code → authentication passed → login successful
 # @shared_login_limit
 # global attempt counter
 login_attempts = {}
 @app.route("/", methods=["GET", "POST"], endpoint="login")
 def login():
 
-    ip = request.remote_addr
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
     now = datetime.now()
 
     login_attempts.setdefault(ip, [])
@@ -58,12 +58,12 @@ def login():
         return "⚠️ Too many login attempts from this IP. Please try again later.", 429
 
     login_attempts[ip].append(now)
-    print(f"🔐 login triggered from IP: {ip} | Number of current attempts: {len(login_attempts[ip])}")
+    print(f"🔐 login triggered from IP: {ip} | Current number of attempts: {len(login_attempts[ip])}")
 
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        login_ip = request.remote_addr
+        login_ip = ip
 
         conn = get_db_connection()
         user = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
@@ -72,9 +72,9 @@ def login():
         if user and check_password_hash(user["password"], password):
             last_ip = user["last_login_ip"]
             if last_ip and last_ip != login_ip:
-                print(f"⚠️ New device login detected: current IP={login_ip}, last IP={last_ip} ")
+                print(f"⚠️ New device login detected：login IP={login_ip}, last IP={last_ip}")
             else:
-                print("✅ The login environment is normal")
+                print("✅ Login environment is normal")
 
             code = generate_code()
             session["pending_user"] = username
@@ -102,8 +102,9 @@ def verify():
 
         if code_input == session["login_code"]:
             session["user"] = session.pop("pending_user")
+            session["mfa_verified"] = True
             conn = get_db_connection()
-            conn.execute("UPDATE users SET last_login_ip = ? WHERE username = ?", (request.remote_addr, session["user"]))
+            conn.execute("UPDATE users SET last_login_ip = ? WHERE username = ?", (request.headers.get("X-Forwarded-For", request.remote_addr), session["user"]))
             conn.commit()
             conn.close()
             session.pop("login_code", None)
@@ -183,14 +184,14 @@ def register_verify():
 
 @app.route("/query")
 def query_page():
-    if "user" not in session:
+    if "user" not in session or "mfa_verified" not in session:
         return redirect("/")
     return render_template("query.html")
 
 @app.route("/search")
 def search():
-    if "user" not in session:
-        return jsonify([])
+    if "user" not in session or "mfa_verified" not in session:
+        return redirect("/")
 
     loan_id = request.args.get("id")
     conn = get_db_connection()
@@ -207,9 +208,11 @@ def search():
 @app.route("/logout")
 def logout():
     session.pop("user", None)
+    session.pop("mfa_verified", None)
     return redirect("/")
 
 
+@limiter.limit("1 per 10 seconds")
 @app.route('/create_project', methods=['GET', 'POST'])
 def create_project():
     if request.method == 'POST':
@@ -220,22 +223,19 @@ def create_project():
         score = detect_ai_generated_text(description)
         print(f"🤖 AI Trust Score: {score}")
 
-        # ✅ deposit in a database
-        conn = get_db_connection()
-        conn.execute(
-            "INSERT INTO projects (title, description, ai_score) VALUES (?, ?, ?)",
-            (title, description, score)
-        )
-        conn.commit()
-        conn.close()
-
-
         if score <= 0.4:
             flash(f"❌ Rejected (Trust Score: {score})", "error")
+            return render_template("create_project.html")
         else:
+            conn = get_db_connection()
+            conn.execute(
+                "INSERT INTO projects (title, description, ai_score) VALUES (?, ?, ?)",
+                (title, description, score)
+            )
+            conn.commit()
+            conn.close()
             flash(f"✅ Accepted (Trust Score: {score})", "success")
-
-        return render_template("create_project.html")
+            return render_template("create_project.html")
 
     return render_template("create_project.html")
 
@@ -245,3 +245,4 @@ def ratelimit_handler(e):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
