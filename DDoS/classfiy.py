@@ -1,21 +1,14 @@
 import os
 import pandas as pd
 
-
 def add_label_column_from_filename(csv_path):
-    """
-    讀取 Wireshark 匯出的 CSV（如含 No., Time, Source, Destination, Protocol, Length, Info）
-    並依檔名自動新增 'label' 欄位，標記該流量是 Normal 還是特定攻擊。
 
-    :param csv_path: CSV 檔案路徑，如 'data/syn.csv'、'data/normal.csv' 等
-    :return: 回傳含新欄位 label 的 DataFrame
-    """
-    # 1. 讀取原始 CSV
+    # 1. Read the original CSV
     df = pd.read_csv(csv_path)
 
-    # 2. 依照檔案名稱來判斷是何種攻擊或正常流量
-    #    這裡可自行擴充 mapping，或以一連串 if/elif... 撰寫
-    filename = os.path.basename(csv_path).lower()  # 取出檔名並轉小寫，方便比對
+    # 2. Determine the type of traffic (attack or normal) based on the filename
+    #    You can extend this mapping or use a series of if/elif... statements
+    filename = os.path.basename(csv_path).lower()  # Extract filename and convert to lowercase for easier matching
     if "normal" in filename:
         label_value = "Normal"
     elif "syn" in filename:
@@ -29,27 +22,27 @@ def add_label_column_from_filename(csv_path):
     else:
         label_value = "Unclassified"
 
-    # 3. 新增 'label' 欄位
+    # 3. Add the 'label' column
     df['label'] = label_value
 
-    # 4. （可選）可以重新命名欄位，讓後續好做特徵處理
-    #    例如改名: Time -> timestamp, Source -> src_ip, Destination -> dst_ip, Length -> packet_len
+    # 4. (Optional) Rename columns for easier feature processing later
+    #    For example: Time -> timestamp, Source -> src_ip, Destination -> dst_ip, Length -> packet_len
     df = df.rename(columns={
         'Time': 'timestamp',
         'Source': 'src_ip',
         'Destination': 'dst_ip',
         'Protocol': 'protocol',
         'Length': 'packet_len',
-        'Info': 'info'  # 依需求可保留或刪除
+        'Info': 'info'  # Keep or remove depending on your needs
     })
 
-    # 5. 回傳 DataFrame，或可在這裡直接另存成新的 CSV
+    # 5. Return the DataFrame; optionally, you could save it as a new CSV file here
     # df.to_csv("xxx_labeled.csv", index=False)
     return df
 
 
 if __name__ == "__main__":
-    # 假設有幾個檔案
+    # Assume a list of CSV files
     csv_files = [
         "C:/Users/ASUS/Desktop/normal traffic.csv",
         "C:/Users/ASUS/Desktop/tcp syn flood attack.csv",
@@ -59,14 +52,14 @@ if __name__ == "__main__":
         # ...
     ]
 
-    # 逐一處理，每個 CSV 自動加上 label 欄位
+    # Process each CSV, automatically adding a label column
     for f in csv_files:
         labeled_df = add_label_column_from_filename(f)
-        print(f"檔案 {f} 已新增 label='{labeled_df['label'].unique()[0]}'")
-        print("前五筆資料:")
+        print(f"File {f} labeled as '{labeled_df['label'].unique()[0]}'")
+        print("First five rows:")
         print(labeled_df.head())
         print("-" * 50)
 
-        # 若需存成新檔，可自行指定輸出路徑
+        # If you want to save the labeled file, specify the output path
         out_name = f.replace(".csv", "_labeled.csv")
         labeled_df.to_csv(out_name, index=False)

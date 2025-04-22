@@ -25,15 +25,7 @@ CSV_PATH = "C:/Users/ASUS/Desktop/all_in_one.csv"  # Assuming the CSV contains c
 # (A) Training phase: Parse 'info' field from CSV
 # -----------------------------------------------------------
 def parse_info_field(info_str, protocol_str):
-    """
-    For offline CSV (exported from Wireshark, may include [SYN], [ACK], GET, POST etc.),
-    parse TCP Flags (tcp_flag_val) and HTTP Method (http_method_val).
 
-    Return: (tcp_flag_val, http_method_val)
-    - tcp_flag_val: matched by checking strings like [SYN], [ACK], etc.
-        SYN=0x02, ACK=0x10, FIN=0x01, PSH=0x08
-    - http_method_val: GET=1, POST=2, others=0
-    """
     if not isinstance(info_str, str):
         return (0, 0)
 
@@ -125,10 +117,7 @@ def train_or_load_model():
 # (B) Real-time detection phase: Extract flags / HTTP from Scapy packet
 # -----------------------------------------------------------
 def extract_features(pkt):
-    """
-    Extract (proto_val, packet_len, tcp_flag_val, http_method_val)
-    from Scapy packet for ML prediction.
-    """
+
     proto_val = 0
     pkt_len = len(pkt)
     tcp_flag_val = 0
@@ -164,9 +153,7 @@ def extract_features(pkt):
     return [proto_val, pkt_len, tcp_flag_val, http_method_val]
 
 def ml_predict_packet(pkt, pipeline):
-    """
-    Predict label for a packet using trained ML pipeline.
-    """
+
     feats = extract_features(pkt)
     feat_df = pd.DataFrame([feats], columns=["proto_val", "packet_len", "tcp_flag_val", "http_method_val"])
     predicted_label = pipeline.predict(feat_df)[0]
@@ -176,9 +163,7 @@ def ml_predict_packet(pkt, pipeline):
 # (C) SnifferGuard: Sliding time window + threshold + ML prediction
 # -----------------------------------------------------------
 class SnifferGuard:
-    """
-    Real-time packet monitor using ML (proto_val, packet_len, tcp_flag_val, http_method_val) to detect attacks.
-    """
+
 
     def __init__(
         self,
